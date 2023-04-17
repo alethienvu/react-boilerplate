@@ -22,10 +22,10 @@ export const LoginContainer: React.FC<Props> = ({ control, loading, errors, subm
         <FormItem>
           <Input
             control={control}
-            name='username'
+            name='email'
             label={LanguageTranslate.form.login.label_username}
-            isError={Boolean(errors?.username)}
-            errorMessage={errors?.username?.message}
+            isError={Boolean(errors?.email)}
+            errorMessage={errors?.email?.message}
           />
         </FormItem>
         <FormItem>

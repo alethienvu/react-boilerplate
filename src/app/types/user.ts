@@ -1,21 +1,23 @@
 export enum UserRole {
-  SuperAdmin = 'super_admin',
-  Admin = 'admin',
-  User = 'user',
+  SuperAdmin = 'SUPER_ADMIN',
+  Admin = 'ADMIN',
+  User = 'USER',
 }
 
 export interface IUser {
   id: string;
-  username: string;
-  phoneNumber: string;
   email: string;
   role: UserRole;
 }
-
-export interface IUserServerResponse {
+export interface IUserServerData {
   id: string;
-  username: string;
-  phoneNumber: string;
   email: string;
   role: UserRole;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface IUserServerResponse {
+  data: IUserServerData;
+  metadata: any;
 }

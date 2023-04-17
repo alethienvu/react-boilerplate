@@ -16,18 +16,18 @@ export const LoginPage: React.FC<Props> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const { control, formState, handleSubmit } = useForm<TLoginArgs>({
     mode: 'onChange',
-    defaultValues: { username: '', password: '' },
+    defaultValues: { email: '', password: '' },
     resolver: yupResolver(loginValidator),
   });
   const { login } = useAuth();
 
-  const submitForm = handleSubmit(async ({ username, password }) => {
-    console.log({ username, password });
+  const submitForm = handleSubmit(async ({ email, password }) => {
+    console.log({ email, password });
 
     setLoading(true);
 
     try {
-      await login(username, password);
+      await login(email, password);
     } catch (err) {
       console.log({ err });
     } finally {

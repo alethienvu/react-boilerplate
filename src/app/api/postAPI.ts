@@ -14,7 +14,7 @@ import { mappingPaginationServerToClient } from 'app/utils/helper';
 const postAPIBaseUrl = '/posts';
 
 /* Types export for outside */
-/* ==================== START ==================== */
+//#region
 export type TFetchPostsArgs = IPaginationQuery;
 export type TFetchPostsRes = IPaginationResponse<IPost>;
 
@@ -40,10 +40,9 @@ export type TDeletePostArgs = {
   id: string;
 };
 export type TDeletePostRes = IPost;
-/* ==================== END ==================== */
-
+//#endregion
 /* API Types */
-/* ==================== START ==================== */
+//#region
 type ApiFetchPostsArgs = IPaginationQueryServer;
 type ApiFetchPostsRes = IPaginationServerResponse<IPostServerResponse>;
 
@@ -66,7 +65,7 @@ type ApiUpdatePostRes = IPostServerResponse;
 
 type ApiDeletePostArgs = {};
 type ApiDeletePostRes = IPostServerResponse;
-/* ==================== END ==================== */
+//#endregion
 
 const fetchPosts = async (query: TFetchPostsArgs): Promise<TFetchPostsRes> => {
   const queryObject: ApiFetchPostsArgs = {

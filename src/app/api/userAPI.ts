@@ -1,20 +1,14 @@
 import queryString from 'query-string';
 
-import {
-  IPaginationQuery,
-  IPaginationQueryServer,
-  IPaginationResponse,
-  IPaginationServerResponse,
-} from 'app/types/pagination';
-import { IUser, IUserServerResponse, UserRole } from 'app/types/user';
+import { IPaginationQuery, IPaginationQueryServer, IPaginationResponse } from 'app/types/pagination';
+import { IUser, IUserServerData, IUserServerResponse, UserRole } from 'app/types/user';
 import { envConfig } from 'configs/env.config';
 import { apiWrapper } from './axiosClient';
 import { mappingPaginationServerToClient } from 'app/utils/helper';
 
 const userAPIBaseUrl = '/users';
 
-/* Types export for outside */
-/* ==================== START ==================== */
+//#region Types export for outside
 export type TFetchUsersArgs = IPaginationQuery;
 export type TFetchUsersRes = IPaginationResponse<IUser>;
 
@@ -46,12 +40,10 @@ export type TDeleteUserArgs = {
   id: string;
 };
 export type TDeleteUserRes = IUser;
-/* ==================== END ==================== */
+//#endregion
 
-/* API Types */
-/* ==================== START ==================== */
+//#region API Types
 type ApiFetchUsersArgs = IPaginationQueryServer;
-type ApiFetchUsersRes = IPaginationServerResponse<IUserServerResponse>;
 
 type ApiFetchOneUserArgs = {
   id: string;
@@ -59,9 +51,7 @@ type ApiFetchOneUserArgs = {
 type ApiFetchOneUserRes = IUserServerResponse;
 
 type ApiCreateUserArgs = {
-  username: string;
   email: string;
-  phoneNumber: string;
   role: UserRole;
   password: string;
 };
@@ -78,7 +68,7 @@ type ApiUpdateUserRes = IUserServerResponse;
 
 type ApiDeleteUserArgs = {};
 type ApiDeleteUserRes = IUserServerResponse;
-/* ==================== END ==================== */
+//#endregion
 
 const fetchUsers = async (query: TFetchUsersArgs): Promise<TFetchUsersRes> => {
   const queryObject: ApiFetchUsersArgs = {
@@ -90,10 +80,10 @@ const fetchUsers = async (query: TFetchUsersArgs): Promise<TFetchUsersRes> => {
     url: userAPIBaseUrl,
     query: queryObject as any,
   });
-  const res = await apiWrapper.get<ApiFetchUsersRes>(url);
+  const res = await apiWrapper.get<any>(url);
 
-  return mappingPaginationServerToClient<IUserServerResponse, IUser>({
-    paginationData: res,
+  return mappingPaginationServerToClient<IUserServerData, IUser>({
+    paginationData: res.data,
     mappingFunc: mappingServerDataUnderUserView,
   });
 };
@@ -105,20 +95,18 @@ const fetchOneUser = async (params: TFetchOneUserArgs): Promise<TFetchOneUserRes
   const url = `${userAPIBaseUrl}/${queryObject.id}`;
   const res = await apiWrapper.get<ApiFetchOneUserRes>(url);
 
-  return mappingServerDataUnderUserView(res);
+  return mappingServerDataUnderUserView(res.data);
 };
 
 const createUser = async (params: TCreateUserArgs): Promise<TCreateUserRes> => {
   const body: ApiCreateUserArgs = {
-    username: params.username,
     email: params.email,
-    phoneNumber: params.phoneNumber,
     role: params.role,
     password: params.password,
   };
 
   const apiResult = await apiWrapper.post<ApiCreateUserArgs, ApiCreateUserRes>(userAPIBaseUrl, body);
-  return mappingServerDataUnderUserView(apiResult);
+  return mappingServerDataUnderUserView(apiResult.data);
 };
 
 const updateUser = async (params: TUpdateUserArgs): Promise<TUpdateUserRes> => {
@@ -131,22 +119,20 @@ const updateUser = async (params: TUpdateUserArgs): Promise<TUpdateUserRes> => {
   };
 
   const apiResult = await apiWrapper.put<ApiUpdateUserArgs, ApiUpdateUserRes>(url, updateOptions);
-  return mappingServerDataUnderUserView(apiResult);
+  return mappingServerDataUnderUserView(apiResult.data);
 };
 
 const deleteUser = async (params: TDeleteUserArgs): Promise<TDeleteUserRes> => {
   const url = `${userAPIBaseUrl}/${params.id}`;
 
   const apiResult = await apiWrapper._delete<ApiDeleteUserArgs, ApiDeleteUserRes>(url, {});
-  return mappingServerDataUnderUserView(apiResult);
+  return mappingServerDataUnderUserView(apiResult.data);
 };
 
-const mappingServerDataUnderUserView = (serverData: IUserServerResponse): IUser => {
+const mappingServerDataUnderUserView = (serverData: IUserServerData): IUser => {
   const userData: IUser = {
     id: serverData.id,
-    username: serverData.username,
     email: serverData.email,
-    phoneNumber: serverData.phoneNumber,
     role: serverData.role,
   };
 

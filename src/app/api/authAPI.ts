@@ -4,10 +4,9 @@ import userAPI from './userAPI';
 
 const authAPIBaseUrl = '/auth';
 
-/* Types export for outside */
-/* ==================== START ==================== */
+//#region Types export for outside
 export type TLoginArgs = {
-  username: string;
+  email: string;
   password: string;
 };
 export type TLoginRes = {
@@ -20,26 +19,22 @@ export type TLoginError = {
 
 // export type TGetMeArgs = {}
 export type TGetMeRes = IUser;
-/* ==================== END ==================== */
+//#endregion
 
-/* API Types */
-/* ==================== START ==================== */
+//#region API Types
 type ApiLoginArgs = {
-  username: string;
+  email: string;
   password: string;
 };
-type ApiLoginRes = {
-  user: IUserServerResponse;
-  token: string;
-};
+type ApiLoginRes = IUserServerResponse;
 
 // type ApiGetMeArgs = {}
 type ApiGetMeRes = IUserServerResponse;
-/* ==================== END ==================== */
+//#endregion
 
 const login = async (params: TLoginArgs): Promise<TLoginRes> => {
   const body: ApiLoginArgs = {
-    username: params.username,
+    email: params.email,
     password: params.password,
   };
   const result = await apiWrapper.post<ApiLoginArgs, ApiLoginRes>(`${authAPIBaseUrl}/login`, body);
@@ -47,15 +42,15 @@ const login = async (params: TLoginArgs): Promise<TLoginRes> => {
   console.log({ result, params });
 
   return {
-    user: userAPI.mappingServerDataUnderUserView(result.user),
-    token: result.token,
+    user: result.data,
+    token: result.data.accessToken,
   };
 };
 
 const getMe = async (): Promise<TGetMeRes> => {
-  const result = await apiWrapper.get<ApiGetMeRes>(`${authAPIBaseUrl}/me`);
+  const result = await apiWrapper.get<ApiGetMeRes>(`${authAPIBaseUrl}/current`);
 
-  return userAPI.mappingServerDataUnderUserView(result);
+  return userAPI.mappingServerDataUnderUserView(result.data);
 };
 
 const authAPI = { login, getMe };

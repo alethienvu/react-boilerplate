@@ -51,9 +51,9 @@ function useAuth() {
     }
   };
 
-  const handleLogin = async (username: string, password: string) => {
+  const handleLogin = async (email: string, password: string) => {
     try {
-      const { user, token } = await login({ username, password });
+      const { user, token } = await login({ email, password });
 
       localStorage.setItem(LocalStorageKeys.AUTH_TOKEN, token);
 
